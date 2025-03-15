@@ -33,3 +33,31 @@ export async function getRepositoryOutline() {
     },
   ];
 }
+
+export async function getFile(path: string) {
+  const login = await currentUser();
+
+  const content = await ContentRepository.getRepositoryPathContent(
+    octokit,
+    login,
+    process.env.GITHUB_REPO!,
+    path
+  );
+
+  if (!content.data) {
+    return null;
+  }
+
+  if (Array.isArray(content.data)) {
+    return null;
+  }
+
+  if (content.data.type !== "file") {
+    return null;
+  }
+
+  return {
+    name: content.data.name,
+    content: atob(content.data.content),
+  };
+}

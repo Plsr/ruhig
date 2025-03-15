@@ -1,4 +1,4 @@
-import { getRepositoryOutline } from "./data/content.dto";
+import { getRepositoryOutline } from "../data/content.dto";
 
 export default async function Home() {
   const content = await getRepositoryOutline();

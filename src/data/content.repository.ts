@@ -18,4 +18,19 @@ export class ContentRepository {
 
     return content;
   }
+
+  static async getRepositoryPathContent(
+    octokit: Octokit,
+    user: string,
+    repository: string,
+    path: string
+  ) {
+    const content = await octokit.rest.repos.getContent({
+      owner: user,
+      repo: repository,
+      path,
+    });
+
+    return content;
+  }
 }
