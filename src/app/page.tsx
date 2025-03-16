@@ -7,17 +7,5 @@ export default async function Home() {
     return <div>Nothing to show</div>;
   }
 
-  return (
-    <div>
-      {content.map((item) => {
-        return (
-          <div key={item.path}>
-            <p>
-              {item.name} ({item.type})
-            </p>
-          </div>
-        );
-      })}
-    </div>
-  );
+  return <div>No file selected</div>;
 }
