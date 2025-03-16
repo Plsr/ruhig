@@ -3,7 +3,7 @@ import { getFile } from "@/data/content.dto";
 import { notFound } from "next/navigation";
 
 type Params = Promise<{ params: string[] }>;
-export const Page = async ({ params }: { params: Params }) => {
+const Page = async ({ params }: { params: Params }) => {
   const path = (await params).params.join("/");
   const content = await getFile(path);
 
