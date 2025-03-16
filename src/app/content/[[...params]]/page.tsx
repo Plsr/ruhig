@@ -1,4 +1,4 @@
-import { UpdateButton } from "@/components/UpdateButton";
+import { EditContent } from "@/components/EditContent";
 import { getFile } from "@/data/content.dto";
 import { notFound } from "next/navigation";
 
@@ -14,8 +14,7 @@ const Page = async ({ params }: { params: Params }) => {
   return (
     <div>
       <h1>{content.name}</h1>
-      <div>{content.content}</div>
-      <UpdateButton content={content.content} path={path} sha={content.sha} />
+      <EditContent content={content.content} path={path} sha={content.sha} />
     </div>
   );
 };
