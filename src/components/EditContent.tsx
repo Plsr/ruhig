@@ -1,23 +1,8 @@
 "use client";
 
 import { updateFile } from "@/app/content/[[...params]]/actions";
-import {
-  Editor,
-  rootCtx,
-  defaultValueCtx,
-  editorViewCtx,
-  serializerCtx,
-} from "@milkdown/kit/core";
-import { commonmark } from "@milkdown/kit/preset/commonmark";
-import { tooltipFactory, TooltipProvider } from "@milkdown/kit/plugin/tooltip";
-import { gfm } from "@milkdown/kit/preset/gfm";
-import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react";
-import type { EditorView } from "prosemirror-view";
-
-import { nord } from "@milkdown/theme-nord";
-import "@milkdown/theme-nord/style.css";
-import { usePluginViewFactory } from "@prosemirror-adapter/react";
-import { tooltip, TooltipView } from "./Tooltip";
+import { Editor } from "./Editor";
+import { useState } from "react";
 
 type Props = {
   content: string;
@@ -26,14 +11,33 @@ type Props = {
 };
 
 export const EditContent = ({ content, path, sha }: Props) => {
+  const [updatedContent, setUpdatedContent] = useState<string | null>(null);
   const handleSave = async () => {
-    console.log("save");
+    if (!updatedContent) return;
+    console.log(updatedContent);
+    const encodedContent = btoa(updatedContent);
+    console.log(encodedContent);
+    await updateFile({
+      path,
+      content: encodedContent,
+      sha,
+    });
   };
 
   return (
     <>
-      <div>{content}</div>
-      <button onClick={handleSave}>Save</button>
+      <div className="prose">
+        <Editor
+          markdown={content}
+          onChange={(markdown) => setUpdatedContent(markdown)}
+        />
+      </div>
+      <button
+        className="bg-gray-900 text-white px-4 py-2 rounded-md"
+        onClick={handleSave}
+      >
+        Save
+      </button>
     </>
   );
 };
