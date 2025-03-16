@@ -9,8 +9,15 @@ import {
   serializerCtx,
 } from "@milkdown/kit/core";
 import { commonmark } from "@milkdown/kit/preset/commonmark";
+import { tooltipFactory, TooltipProvider } from "@milkdown/kit/plugin/tooltip";
+import { gfm } from "@milkdown/kit/preset/gfm";
 import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react";
+import type { EditorView } from "prosemirror-view";
+
 import { nord } from "@milkdown/theme-nord";
+import "@milkdown/theme-nord/style.css";
+import { usePluginViewFactory } from "@prosemirror-adapter/react";
+import { tooltip, TooltipView } from "./Tooltip";
 
 type Props = {
   content: string;
@@ -19,57 +26,14 @@ type Props = {
 };
 
 export const EditContent = ({ content, path, sha }: Props) => {
-  const handleSave = async (editorContent: string) => {
-    if (editorContent === content) {
-      return;
-    }
-
-    const encodedContent = btoa(editorContent);
-
-    await updateFile({ content: encodedContent, path, sha });
-  };
-
-  return (
-    <MilkdownProvider>
-      <MilkdownEditor defaultValue={content} onSave={handleSave} />
-    </MilkdownProvider>
-  );
-};
-
-type MilkdownEditorProps = {
-  defaultValue: string;
-  onSave: (content: string) => void;
-};
-
-const MilkdownEditor = ({ defaultValue, onSave }: MilkdownEditorProps) => {
-  const editor = useEditor((root) =>
-    Editor.make()
-      .config(nord)
-      .config((ctx) => {
-        ctx.set(rootCtx, root);
-        ctx.set(defaultValueCtx, defaultValue);
-      })
-      .use(commonmark)
-  );
-
-  const handleUpdateClick = async () => {
-    const editorContent = editor.get()?.action((ctx) => {
-      const editorView = ctx.get(editorViewCtx);
-      const serializer = ctx.get(serializerCtx);
-      return serializer(editorView.state.doc);
-    });
-
-    if (!editorContent) {
-      return;
-    }
-
-    onSave(editorContent);
+  const handleSave = async () => {
+    console.log("save");
   };
 
   return (
     <>
-      <Milkdown />
-      <button onClick={handleUpdateClick}>Update</button>
+      <div>{content}</div>
+      <button onClick={handleSave}>Save</button>
     </>
   );
 };
