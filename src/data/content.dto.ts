@@ -59,5 +59,28 @@ export async function getFile(path: string) {
   return {
     name: content.data.name,
     content: atob(content.data.content),
+    sha: content.data.sha,
   };
+}
+
+export async function updateFile({
+  content,
+  path,
+  sha,
+}: {
+  content: string;
+  path: string;
+  sha: string;
+}) {
+  const login = await currentUser();
+
+  const res = await ContentRepository.updateFile({
+    octokit,
+    content,
+    user: login,
+    path,
+    sha,
+  });
+
+  return res === 200 ? true : false;
 }

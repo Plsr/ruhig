@@ -1,3 +1,4 @@
+import { UpdateButton } from "@/components/UpdateButton";
 import { getFile } from "@/data/content.dto";
 import { notFound } from "next/navigation";
 
@@ -14,6 +15,7 @@ export const Page = async ({ params }: { params: Params }) => {
     <div>
       <h1>{content.name}</h1>
       <div>{content.content}</div>
+      <UpdateButton content={content.content} path={path} sha={content.sha} />
     </div>
   );
 };
