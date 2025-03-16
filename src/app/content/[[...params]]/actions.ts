@@ -1,6 +1,5 @@
 "use server";
 
-import { octokit } from "@/data/octokit";
 import { updateFile as updateFileDto } from "@/data/content.dto";
 import { revalidatePath } from "next/cache";
 
