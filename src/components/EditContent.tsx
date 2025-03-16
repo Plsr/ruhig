@@ -1,7 +1,16 @@
 "use client";
 
 import { updateFile } from "@/app/content/[[...params]]/actions";
-import { useRef } from "react";
+import {
+  Editor,
+  rootCtx,
+  defaultValueCtx,
+  editorViewCtx,
+  serializerCtx,
+} from "@milkdown/kit/core";
+import { commonmark } from "@milkdown/kit/preset/commonmark";
+import { Milkdown, MilkdownProvider, useEditor } from "@milkdown/react";
+import { nord } from "@milkdown/theme-nord";
 
 type Props = {
   content: string;
@@ -10,28 +19,56 @@ type Props = {
 };
 
 export const EditContent = ({ content, path, sha }: Props) => {
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  console.log(path, sha);
-
-  const handleUpdateClick = async () => {
-    const updatedContent = textAreaRef.current?.value;
-    if (!updatedContent || updatedContent === content) {
+  const handleSave = async (editorContent: string) => {
+    if (editorContent === content) {
       return;
     }
 
-    const encodedContent = btoa(updatedContent);
+    const encodedContent = btoa(editorContent);
 
     await updateFile({ content: encodedContent, path, sha });
   };
 
   return (
+    <MilkdownProvider>
+      <MilkdownEditor defaultValue={content} onSave={handleSave} />
+    </MilkdownProvider>
+  );
+};
+
+type MilkdownEditorProps = {
+  defaultValue: string;
+  onSave: (content: string) => void;
+};
+
+const MilkdownEditor = ({ defaultValue, onSave }: MilkdownEditorProps) => {
+  const editor = useEditor((root) =>
+    Editor.make()
+      .config(nord)
+      .config((ctx) => {
+        ctx.set(rootCtx, root);
+        ctx.set(defaultValueCtx, defaultValue);
+      })
+      .use(commonmark)
+  );
+
+  const handleUpdateClick = async () => {
+    const editorContent = editor.get()?.action((ctx) => {
+      const editorView = ctx.get(editorViewCtx);
+      const serializer = ctx.get(serializerCtx);
+      return serializer(editorView.state.doc);
+    });
+
+    if (!editorContent) {
+      return;
+    }
+
+    onSave(editorContent);
+  };
+
+  return (
     <>
-      <textarea
-        ref={textAreaRef}
-        className="w-2xl"
-        defaultValue={content}
-      ></textarea>
-      <br />
+      <Milkdown />
       <button onClick={handleUpdateClick}>Update</button>
     </>
   );
