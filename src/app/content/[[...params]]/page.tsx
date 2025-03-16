@@ -12,8 +12,7 @@ const Page = async ({ params }: { params: Params }) => {
   }
 
   return (
-    <div>
-      <h1>{content.name}</h1>
+    <div className="p-4">
       <EditContent content={content.content} path={path} sha={content.sha} />
     </div>
   );

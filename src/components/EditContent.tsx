@@ -1,7 +1,8 @@
 "use client";
 
 import { updateFile } from "@/app/content/[[...params]]/actions";
-import { useRef } from "react";
+import { Editor } from "./Editor";
+import { useState } from "react";
 
 type Props = {
   content: string;
@@ -10,29 +11,33 @@ type Props = {
 };
 
 export const EditContent = ({ content, path, sha }: Props) => {
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
-  console.log(path, sha);
-
-  const handleUpdateClick = async () => {
-    const updatedContent = textAreaRef.current?.value;
-    if (!updatedContent || updatedContent === content) {
-      return;
-    }
-
+  const [updatedContent, setUpdatedContent] = useState<string | null>(null);
+  const handleSave = async () => {
+    if (!updatedContent) return;
+    console.log(updatedContent);
     const encodedContent = btoa(updatedContent);
-
-    await updateFile({ content: encodedContent, path, sha });
+    console.log(encodedContent);
+    await updateFile({
+      path,
+      content: encodedContent,
+      sha,
+    });
   };
 
   return (
     <>
-      <textarea
-        ref={textAreaRef}
-        className="w-2xl"
-        defaultValue={content}
-      ></textarea>
-      <br />
-      <button onClick={handleUpdateClick}>Update</button>
+      <div className="prose">
+        <Editor
+          markdown={content}
+          onChange={(markdown) => setUpdatedContent(markdown)}
+        />
+      </div>
+      <button
+        className="bg-gray-900 text-white px-4 py-2 rounded-md"
+        onClick={handleSave}
+      >
+        Save
+      </button>
     </>
   );
 };
